@@ -196,6 +196,7 @@ return output
 if name == "main":
     app.run(debug=True)
 ```
+
 # Security code review
 Я нашёл в данном коде уязвимость связанную с возможной атакой при помощи инъекции шаблонов **(Template Injection).**
 
@@ -217,13 +218,58 @@ if name == "main":
 - Вот как это будет выглядеть:   ***output = Template('Hello {{ name }}! Your age is {{ age }}.').render(name=name, age=age).***
 - Этот способ обеспечит нам безопасное форматирование строк и автоматическое экранирование входных данных, защитит от атак на основе ***инъекции шаблонов.***
 # Аргументация
-Я выбрал способ с использованием шаблонизаторов, так как мы уже внедрили класс "Template" из модуля "jinja2" в наш кодик (не зря же он там есть :0 ), а раз есть, так используем его.
+Я выбрал способ с использованием шаблонизаторов, так как мы уже внедрили класс "Template" из модуля "jinja2" в наш код, не зря же он там есть, а раз есть, так используем его.
 
-Нуу...и на мой взгляд, именно этот способ и будет являться самым лучшим и эффективным.
 
+
+# Можно сделать ещё таким образом:
+
+Для строк:
+- ***name = request.values.get('name')***
+- ***age = request.values.get('age', 'unknown')***
+
+  
+  Добавлю проверку пользовательского ввода переменных ***"name"*** и ***"age"***
+
+  
+  Это будет выглядеть следующм образом:
+     # Проверка наличия значения "name"
+   - **if name is None:**
+  -  **return "Name is missing"**
+
+    # Проверка корректности "age"
+    - **if not age.isdigit():**
+    - **return "Invalid age"**
+
+  
+  В конечном итоге код будет выглядеть так
+```
+  from flask import Flask, request
+from jinja2 import Template
+
+app = Flask(__name__)
+
+@app.route("/page")
+def page():
+    name = request.values.get('name')
+    age = request.values.get('age', 'unknown')
+
+    if name is None:
+        return "Name is missing"
+
+    if not age.isdigit():
+        return "Invalid age"
+
+    output = Template('Hello ' + name + '! Your age is ' + age + '.').render()
+    return output
+
+if name == "main":
+    app.run(debug=True)
+ ```
 
 
 # Пример №2.2
+
 ```
 from flask import Flask, request
 import subprocess
@@ -238,8 +284,11 @@ def dns_lookup():
 return output
 if name == "main":
     app.run(debug=True)
-
 ```
+
+
+
+
 # Security code review
 В данном коде я нашёл уязвимость связанную с возможной атакой на основе выполнения произвольных команд ***Command Injection***
 
@@ -270,7 +319,7 @@ if name == "main":
 # Аргументация:
 Я выбрал этот способ, потому что он обеспечивает безопасное выполнение DNS-запрсоов, мы не используем командную оболочку, тем самым откидываем шансы атак на основе произвольных команд.
 
-# Кодик :)
+# Код:
 ```
 from flask import Flask, request
 import socket
