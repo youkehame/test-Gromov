@@ -105,22 +105,22 @@ import (
 var db *sql.DB
 
 func initDB() {
-    // Переменные для подключения к базе данных
+  
     username := "user"
     password := "password"
     dbname := "dbname"
 
-    // Формирование строки подключения
+   
     dataSourceName := fmt.Sprintf("%s:%s@/%s", username, password, dbname)
 
-    // Подключение к базе данных
+   
     var err error
     db, err = sql.Open("mysql", dataSourceName)
     if err != nil {
         log.Fatal(err)
     }
 
-    // Проверка подключения к базе данных
+   
     err = db.Ping()
     if err != nil {
         log.Fatal(err)
