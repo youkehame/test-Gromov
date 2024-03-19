@@ -247,7 +247,7 @@ if name == "main":
   from flask import Flask, request
 from jinja2 import Template
 
-app = Flask(__name__)
+app = Flask(name)
 
 @app.route("/page")
 def page():
